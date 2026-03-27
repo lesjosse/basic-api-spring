@@ -44,6 +44,22 @@ public class UsuarioService {
     public Usuario update(Long id, UsuarioDTO dto) {
 
         Usuario usuario = findById(id);
+        
+        //Validamos la identificacion
+        if (!usuario.getNumeroIdentificacion().equals(dto.getNumeroIdentificacion())) {
+            repository.findByNumeroIdentificacion(dto.getNumeroIdentificacion())
+                    .ifPresent(u -> {
+                        throw new RuntimeException("Identificación ya en uso");
+                    });
+        }
+
+        //Validamos el correo
+        if(!usuario.getCorreo().equals(dto.getCorreo())){
+            repository.findByCorreo(dto.getCorreo())
+                    .ifPresent(u->{
+                        throw new RuntimeException("El correo ya exite");
+                    });
+        }
 
         UsuarioMapper.updateEntity(usuario, dto);
 
